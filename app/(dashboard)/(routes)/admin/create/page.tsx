@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {
     Form,
   FormControl,
@@ -10,6 +11,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
 import { useState } from "react";
 import {  useForm } from "react-hook-form";
 import { z } from "zod";
@@ -37,7 +39,6 @@ const CreateJob = () => {
           What would you like to name your job? Don&apos;t worry you can change
           this later
         </p>
-      </div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-8">
           <FormField
@@ -52,12 +53,22 @@ const CreateJob = () => {
                   placeholder="Full Stack Developer etch" 
                   {...field} />
                 </FormControl>
+                <FormDescription>
+                  Role of this Job
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
+          <div className="flex items-center">
+            <Link href={'/'}>
+            <Button type="button" variant={'ghost'}>Cancel</Button>
+            </Link>
+            <Button type="submit" disabled={isLoading}>Continue</Button>
+          </div>
         </form>
       </Form>
+      </div>
     </div>
   );
 };
