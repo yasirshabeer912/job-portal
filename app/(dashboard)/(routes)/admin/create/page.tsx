@@ -15,21 +15,37 @@ import Link from "next/link";
 import { useState } from "react";
 import {  useForm } from "react-hook-form";
 import { z } from "zod";
+import axios from "axios"
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 const formSchema = z.object({
   title: z.string().min(1, { message: "Job Title Cannot be empty" }),
 });
 const CreateJob = () => {
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
     },
   });
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
-  };
 
   const [isLoading, setIsLoading] = useState(false)
+  const {isSubmitting, isValid} = form.formState
+  const router = useRouter()
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    console.log(values);
+    try {
+      const response = await axios.post('/api/jobs',values)
+      router.push(`/admin/jobs/${response.data.id}`)
+      toast.success('Job Created')
+    } catch (error) {
+      console.log("Erro calling API ",error)
+    }
+  };
+
+  
 
   return (
     <div className="max-w-5xl mx-auto flex md:items-center md:justify-center p-6 h-full">
@@ -49,7 +65,7 @@ const CreateJob = () => {
                 <FormLabel>Username</FormLabel>
                 <FormControl>
                   <Input 
-                  disabled={isLoading}
+                  disabled={isSubmitting}
                   placeholder="Full Stack Developer etch" 
                   {...field} />
                 </FormControl>
@@ -64,7 +80,7 @@ const CreateJob = () => {
             <Link href={'/'}>
             <Button type="button" variant={'ghost'}>Cancel</Button>
             </Link>
-            <Button type="submit" disabled={isLoading}>Continue</Button>
+            <Button type="submit" disabled={isSubmitting || !isValid}>Continue</Button>
           </div>
         </form>
       </Form>
