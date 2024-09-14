@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import  JobPublishAction  from "./_components/JobPublishAction";
+import { Banner } from "@/components/Banner";
 
 const JobDetailsPage = async ({ params }: { params: { jobId: string } }) => {
 
@@ -58,6 +59,13 @@ return (
       disabled={!isComplete}
       />
     </div>
+
+    {!job.isPublished && <div>
+      <Banner 
+        variant={"warning"}
+        label = {"This Job is Un Published It will not be visibled in Job List"}
+      />
+      </div>}
   </div>
 );
 
