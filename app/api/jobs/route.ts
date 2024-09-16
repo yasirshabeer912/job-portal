@@ -28,3 +28,13 @@ export const POST = async (req :Request) => {
         return new NextResponse("Internal Server Error ", {status:500})
     }
 }
+
+export const GET = async (req:Request) =>{
+    const {userId} = auth();
+    if(!userId){
+        return new NextResponse("Un-Authorized" , {status:401})
+    }
+    const jobs = await db.job.findMany()
+    return NextResponse.json(jobs)
+
+}
