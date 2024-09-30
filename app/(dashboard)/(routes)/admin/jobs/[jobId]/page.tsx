@@ -36,7 +36,10 @@ const JobDetailsPage = async ({ params }: { params: { jobId: string } }) => {
     return redirect("/admin/jobs");
   }
 
+
   const requiredFields = [job.title, job.description, job.imageUrl, job.categoryId];
+
+
   const totalFields = requiredFields.length;
   const completedFields = requiredFields.filter(Boolean).length;
   const completionText = `(${completedFields}/${totalFields})`;
@@ -97,6 +100,7 @@ const JobDetailsPage = async ({ params }: { params: { jobId: string } }) => {
             value: category.id,
           }))}
         />
+
           </div>
       </div>
     </div>
