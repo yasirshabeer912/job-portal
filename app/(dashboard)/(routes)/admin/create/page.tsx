@@ -35,9 +35,12 @@ const CreateJob = () => {
   const router = useRouter()
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+    const jobData = { 
+      ...values, 
+      categoryId: '' // Only include categoryId if it's provided
+    };
     try {
-      const response = await axios.post('/api/jobs',values)
+      const response = await axios.post('/api/jobs',jobData)
       router.push(`/admin/jobs/${response.data.id}`)
       toast.success('Job Created')
     } catch (error) {
@@ -62,7 +65,7 @@ const CreateJob = () => {
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Username</FormLabel>
+                <FormLabel>Job Name</FormLabel>
                 <FormControl>
                   <Input 
                   disabled={isSubmitting}
