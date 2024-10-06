@@ -8,6 +8,7 @@ import { Banner } from "@/components/Banner";
 import SectionHeading from "./_components/SectionTitle";
 import JobTitle from "./_components/JobTitle";
 import CategoryForm from "./_components/CategoryForm";
+import ImageForm from "./_components/ImageForm";
 
 const JobDetailsPage = async ({ params }: { params: { jobId: string } }) => {
   // verify the mongoID
@@ -29,16 +30,19 @@ const JobDetailsPage = async ({ params }: { params: { jobId: string } }) => {
   });
 
   const categories = await db.category.findMany({
-    orderBy:{name: "asc"}
-  })
+    orderBy: { name: "asc" },
+  });
 
   if (!job) {
     return redirect("/admin/jobs");
   }
 
-
-  const requiredFields = [job.title, job.description, job.imageUrl, job.categoryId];
-
+  const requiredFields = [
+    job.title,
+    job.description,
+    job.imageUrl,
+    job.categoryId,
+  ];
 
   const totalFields = requiredFields.length;
   const completedFields = requiredFields.filter(Boolean).length;
@@ -82,26 +86,26 @@ const JobDetailsPage = async ({ params }: { params: { jobId: string } }) => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16">
         <div className="left">
           {/* section title */}
-          <SectionHeading 
-          icon={<LayoutDashboard/>}
-          label={"Customize You Job"}
+          <SectionHeading
+            icon={<LayoutDashboard />}
+            label={"Customize You Job"}
           />
 
-          <JobTitle
-          initialData={job}
-          jobId={params.jobId}
+          <JobTitle initialData={job} jobId={params.jobId} />
+
+          <CategoryForm
+            initialData={job}
+            jobId={params.jobId}
+            options={categories.map((category) => ({
+              label: category.name,
+              value: category.id,
+            }))}
           />
 
-        <CategoryForm
-          initialData={job}
-          jobId={params.jobId}
-          options={categories.map((category) => ({
-            label: category.name,
-            value: category.id,
-          }))}
-        />
+          {/* cover image */}
 
-          </div>
+          <ImageForm initialData={job} jobId={params.jobId} />
+        </div>
       </div>
     </div>
   );
