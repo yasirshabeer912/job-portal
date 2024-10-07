@@ -5,37 +5,64 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Edit2Icon, ImageIcon, Pencil } from "lucide-react";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { Job } from "@prisma/client";
-import Image from "next/image";
-import ImageUpload from "@/components/ui/image-upload-cloudinary";
-interface ImageFormProps {
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { Combobox } from "@/components/ui/combo-box";
+interface JobWorkExperienceProps {
   initialData: Job;
   jobId: string;
 }
+
 const FormSchema = z.object({
-  imageUrl: z.string(),
+  yearsOfExperience: z.string(),
 });
 
-const ImageForm: React.FC<ImageFormProps> = ({ initialData, jobId }) => {
+let options = [
+  {
+    value: "0-6 months",
+    label: "0-6 Months"
+  },
+  {
+    value: "6-12 months",
+    label: "6-12 Months"
+  },
+  {
+    value: "1-3 years",
+    label: "1-3 Years"
+  },
+  {
+    value: "3-5 years",
+    label: "3-5 Years"
+  },
+  {
+    value: "5-10 years",
+    label: "5-10 Years"
+  },
+  {
+    value: "10+ years",
+    label: "10+ Years"
+  }
+]
+
+const JobWorkExperience: React.FC<JobWorkExperienceProps> = ({
+  initialData,
+  jobId
+}) => {
   const [isEditing, setIsEditing] = useState(false);
   const router = useRouter();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      imageUrl: initialData?.imageUrl || "",
+      yearsOfExperience: initialData?.yearsOfExperience || "",
     },
   });
 
@@ -49,12 +76,18 @@ const ImageForm: React.FC<ImageFormProps> = ({ initialData, jobId }) => {
       console.log("Error", error);
     }
   }
+
   const { isSubmitting, isValid } = form.formState;
   const toggleEditing = () => setIsEditing((current) => !current);
+
+  const selectedOption = options.find(
+    (option) => option.value === initialData.yearsOfExperience
+  );
+
   return (
     <div className="mt-6 border bg-neutral-100 rounded-md p-4">
       <div className="font-medium flex items-center justify-between">
-        Job Cover Image
+        Years Of Experience
         <Button onClick={toggleEditing} variant="ghost">
           {isEditing ? (
             <>Cancel</>
@@ -67,23 +100,14 @@ const ImageForm: React.FC<ImageFormProps> = ({ initialData, jobId }) => {
         </Button>
       </div>
 
-      {/* display the imageUrl if not editing */}
-      {!isEditing && (!initialData.imageUrl ? (
-        <div className="flex justify-center items-center h-60 bg-neutral-200 rounded-md">
-          <ImageIcon className="h-10 w-10 text-neutral-500" />
-        </div>
-      ) : (
-        <div className="relative aspect-video mt-2">
-          <Image
-            alt="Cover Image"
-            fill
-            className="w-full h-full object-cover"
-            src={initialData?.imageUrl || ""}
-          />
-        </div>
-      ))}
+      {/* Display the yearsOfExperience if not editing */}
+      {!isEditing && (
+        <p className="text-sm mt-2 text-neutral-500 italic">
+          {selectedOption?.label || "No Work Mode Specified"}
+        </p>
+      )}
 
-      {/* on editing mode display the input */}
+      {/* On editing mode display the input */}
       {isEditing && (
         <Form {...form}>
           <form
@@ -92,15 +116,15 @@ const ImageForm: React.FC<ImageFormProps> = ({ initialData, jobId }) => {
           >
             <FormField
               control={form.control}
-              name="imageUrl"
+              name="yearsOfExperience"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <ImageUpload
-                      value={field.value || ""}
-                      disabled={isSubmitting}
-                      onChange={(url) => field.onChange(url)}
-                      onRemove={() => field.onChange("")}
+                    <Combobox
+                      options={options}
+                      value={field.value}
+                      onChange={field.onChange}
+                      heading="Timing Mode"
                     />
                   </FormControl>
                   <FormMessage />
@@ -119,4 +143,4 @@ const ImageForm: React.FC<ImageFormProps> = ({ initialData, jobId }) => {
   );
 };
 
-export default ImageForm;
+export default JobWorkExperience;

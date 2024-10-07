@@ -5,37 +5,38 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Edit2Icon, ImageIcon, Pencil } from "lucide-react";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { Job } from "@prisma/client";
-import Image from "next/image";
-import ImageUpload from "@/components/ui/image-upload-cloudinary";
-interface ImageFormProps {
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { Combobox } from "@/components/ui/combo-box";
+import { Input } from "@/components/ui/input";
+interface HourlyRateFormProps {
   initialData: Job;
   jobId: string;
 }
+
 const FormSchema = z.object({
-  imageUrl: z.string(),
+  hourlyRate: z.string(),
 });
 
-const ImageForm: React.FC<ImageFormProps> = ({ initialData, jobId }) => {
+const HourlyRateForm: React.FC<HourlyRateFormProps> = ({
+  initialData,
+  jobId
+}) => {
   const [isEditing, setIsEditing] = useState(false);
   const router = useRouter();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      imageUrl: initialData?.imageUrl || "",
+      hourlyRate: initialData?.hourlyRate || "",
     },
   });
 
@@ -49,12 +50,15 @@ const ImageForm: React.FC<ImageFormProps> = ({ initialData, jobId }) => {
       console.log("Error", error);
     }
   }
+
   const { isSubmitting, isValid } = form.formState;
   const toggleEditing = () => setIsEditing((current) => !current);
+
+
   return (
     <div className="mt-6 border bg-neutral-100 rounded-md p-4">
       <div className="font-medium flex items-center justify-between">
-        Job Cover Image
+        Hourly Rate
         <Button onClick={toggleEditing} variant="ghost">
           {isEditing ? (
             <>Cancel</>
@@ -67,23 +71,14 @@ const ImageForm: React.FC<ImageFormProps> = ({ initialData, jobId }) => {
         </Button>
       </div>
 
-      {/* display the imageUrl if not editing */}
-      {!isEditing && (!initialData.imageUrl ? (
-        <div className="flex justify-center items-center h-60 bg-neutral-200 rounded-md">
-          <ImageIcon className="h-10 w-10 text-neutral-500" />
-        </div>
-      ) : (
-        <div className="relative aspect-video mt-2">
-          <Image
-            alt="Cover Image"
-            fill
-            className="w-full h-full object-cover"
-            src={initialData?.imageUrl || ""}
-          />
-        </div>
-      ))}
+      {/* Display the hourlyRate if not editing */}
+      {!isEditing && (
+        <p className="text-sm mt-2 text-neutral-500 italic">
+          {initialData?.hourlyRate ? `$ ${initialData.hourlyRate}/hrs` : "$0/hrs"}
+        </p>
+      )}
 
-      {/* on editing mode display the input */}
+      {/* On editing mode display the input */}
       {isEditing && (
         <Form {...form}>
           <form
@@ -92,15 +87,14 @@ const ImageForm: React.FC<ImageFormProps> = ({ initialData, jobId }) => {
           >
             <FormField
               control={form.control}
-              name="imageUrl"
+              name="hourlyRate"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <ImageUpload
-                      value={field.value || ""}
-                      disabled={isSubmitting}
-                      onChange={(url) => field.onChange(url)}
-                      onRemove={() => field.onChange("")}
+                    <Input 
+                    placeholder="Type the Hourly Rate"
+                    disabled={isSubmitting}
+                    {...field}
                     />
                   </FormControl>
                   <FormMessage />
@@ -119,4 +113,4 @@ const ImageForm: React.FC<ImageFormProps> = ({ initialData, jobId }) => {
   );
 };
 
-export default ImageForm;
+export default HourlyRateForm;
