@@ -14,6 +14,7 @@ import HourlyRateForm from "./_components/HourlyRateForm";
 import ShiftTimingForm from "./_components/ShiftTimingMode";
 import WorkTimingMode from "./_components/WorkTimingMode";
 import JobWorkExperience from "./_components/JobWorkExperience";
+import JobDescription from "./_components/JobDescription";
 
 const JobDetailsPage = async ({ params }: { params: { jobId: string } }) => {
   // verify the mongoID
@@ -130,6 +131,11 @@ const JobDetailsPage = async ({ params }: { params: { jobId: string } }) => {
             initialData={job}
             jobId={params.jobId}
           />
+        </div>
+        <div className="right"></div>
+
+        <div className="col-span-2">
+          <JobDescription initialData={job} jobId={job.id} />
         </div>
       </div>
     </div>
