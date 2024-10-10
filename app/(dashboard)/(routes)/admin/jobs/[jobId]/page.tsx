@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
-import { ArrowLeft, LayoutDashboard } from "lucide-react";
+import { ArrowLeft, LayoutDashboard, ListChecks } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import JobPublishAction from "./_components/JobPublishAction";
@@ -15,6 +15,7 @@ import ShiftTimingForm from "./_components/ShiftTimingMode";
 import WorkTimingMode from "./_components/WorkTimingMode";
 import JobWorkExperience from "./_components/JobWorkExperience";
 import JobDescription from "./_components/JobDescription";
+import TagsForm from "./_components/TagsForm";
 
 const JobDetailsPage = async ({ params }: { params: { jobId: string } }) => {
   // verify the mongoID
@@ -132,7 +133,13 @@ const JobDetailsPage = async ({ params }: { params: { jobId: string } }) => {
             jobId={params.jobId}
           />
         </div>
-        <div className="right"></div>
+        <div className="right space-y-6">
+        <SectionHeading
+            icon={<ListChecks />}
+            label={"Job Requirements"}
+          />
+          <TagsForm initialData={job} jobId={job.id} />
+        </div>
 
         <div className="col-span-2">
           <JobDescription initialData={job} jobId={job.id} />
